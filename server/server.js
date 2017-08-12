@@ -17,7 +17,21 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		console.log('Client Disconnected')
 	})
+
+	// emit event
+	socket.emit('newMessage', {
+		from: 'Gago',
+		text: 'Fuck you',
+		createdAt: 123
+	});
+
+	socket.on('createMessage', (newMessage) => {
+		console.log('createMessage', newMessage);
+	})
+
+
 })
+
 
 
 server.listen(port, () => {
