@@ -88,7 +88,6 @@ function scrollToBottom () {
 		var messageTextbox = jQuery('[name=message]')
 	
 		socket.emit('createMessage', {
-			from: 'Plue',
 			text: messageTextbox.val()
 		}, function() {
 			messageTextbox.val('')

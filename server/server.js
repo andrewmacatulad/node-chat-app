@@ -56,8 +56,14 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('createMessage', (message, callback) => {
-		console.log('createMessage', message);
-		io.emit('newMessage', generateMessage(message.from, message.text));
+		var user = users.getUser(socket.id);
+
+		if(user && isRealString(message.text)) {
+			// the io.to so it can only emit on the user.room and not on any room
+			// then generate a newMessage with the username and text if you message something
+			io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+		}
+ 		
 		callback();
 
 		// io.emit('newMessage', {
@@ -81,7 +87,11 @@ io.on('connection', (socket) => {
 
 
 	socket.on('createLocationMessage', (coords) => {
-		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
+		var user = users.getUser(socket.id);
+
+		if(user) {
+			io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude))
+		}
 	})
 
 	socket.on('disconnect', () => {
