@@ -15,22 +15,34 @@ function scrollToBottom () {
   if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
     messages.scrollTop(scrollHeight)
   }
-	
 }
 
 
 	socket.on('connect', () => {
-		console.log('Connect to the server')
+		var params = jQuery.deparam(window.location.search);
 
-		// socket.emit('createMessage', {
-		// 	from: 'Tanga',
-		// 	text: 'Hey, Fuck'
-		// })
+		socket.emit('join', params, (err) => {
+			if(err) {
+				window.location.href ='/';
+			} else {
+				console.log('No Error');
+			}
+		})
+	})
+
+	socket.on('updateUserList', (users) => {
+		var ol = jQuery('<ol></ol>');
+		users.forEach((user) => {
+			ol.append(jQuery('<li></li>').text(user));
+		});
+
+		jQuery('#users').html(ol);
 	})
 
 	socket.on('disconnect', () => {
 		console.log('Disconnected from the server')
 	})
+
 
 	socket.on('newMessage', (message) => {
 		var formattedTime = moment(message.createdAt).format('h:mm a')
